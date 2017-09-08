@@ -4,4 +4,6 @@
     <string name="cambiar_colores">Cambiar Colores</string>
     <string name="ajustar_luz">Ajustar Luz</string>
     <string name="activar_vibracion">Activar Vibración</string>
+    <string name="vibrarButtonText">Vibrar</string>
+    <string name="ajustar_brillo_deseado">Ajustar brillo deseado</string>
 </resources>
