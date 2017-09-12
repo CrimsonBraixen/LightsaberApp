@@ -3,6 +3,8 @@
     package="com.example.martinartime.lightsaberapp">
 
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name = "android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name = "android.permission.BLUETOOTH"/>
 
     <application
         android:allowBackup="true"
