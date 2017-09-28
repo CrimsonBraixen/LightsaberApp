@@ -51,7 +51,7 @@ public class Bluetooth extends AsyncTask<Void, Void, Void> {
      */
     @Override
     protected void onPreExecute() {
-        progress = ProgressDialog.show(context, "Connecting...", "Please wait!!!");
+        progress = ProgressDialog.show(context, "Conectando...", "Por favor espere!");
     }
 
     /**
