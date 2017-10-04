@@ -24,6 +24,7 @@ import java.util.UUID;
 public class Bluetooth extends AsyncTask<Void, Void, Void> {
 
     private BluetoothAdapter mBluetoothAdapter;
+
     private Set equiposApareados;
     private ArrayList<BluetoothDevice> devices;
     private BluetoothDevice conectado;

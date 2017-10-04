@@ -4,18 +4,15 @@ import android.app.Dialog;
 import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.SystemClock;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.example.martinartime.lightsaberapp.sensores.SensorActivity;
 
 import java.util.ArrayList;
 
@@ -29,8 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView (R.id.colores) ImageView colores;
     @BindView (R.id.luz) ImageView luz;
-    @BindView (R.id.vibrar) ImageView vibrar;
-    Bluetooth bluetooth;
+    static Bluetooth bluetooth;
 
     /**
      * Se hace el binding de las views
@@ -74,6 +70,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Iniciar actividad VerDatos
+     */
+    @OnClick(R.id.cardDatos)
+    public void verDatos(){
+        Intent intent = new Intent(getApplicationContext(), SensorActivity.class);
+
+        YoYo.with(Techniques.Bounce)
+                .duration(2000)
+                .repeat(1)
+                .playOn(findViewById(R.id.colores));
+
+        startActivity(intent);
+    }
+
+    /**
      * Iniciar actividad CambiarColor
      */
     @OnClick(R.id.cardColores)
@@ -94,15 +105,6 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.cardLuz)
     public void ajustarLuz(){
         Intent intent = new Intent(getApplicationContext(), AjustarLuz.class);
-        startActivity(intent);
-    }
-
-    /**
-     * Iniciar actividad HacerVibrar
-     */
-    @OnClick(R.id.cardVibrar)
-    public void hacerVibrar(){
-        Intent intent = new Intent(getApplicationContext(), HacerVibrar.class);
         startActivity(intent);
     }
 }

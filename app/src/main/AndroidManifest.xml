@@ -22,7 +22,7 @@
         </activity>
         <activity android:name=".AjustarLuz"/>
         <activity android:name=".CambiarColor"/>
-        <activity android:name=".HacerVibrar"/>
+        <activity android:name=".sensores.SensorActivity"/>
     </application>
 
 </manifest>

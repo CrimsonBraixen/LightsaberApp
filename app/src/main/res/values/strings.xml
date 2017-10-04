@@ -6,4 +6,12 @@
     <string name="activar_vibracion">Activar Vibración</string>
     <string name="vibrarButtonText">Vibrar</string>
     <string name="ajustar_brillo_deseado">Ajustar brillo deseado</string>
+    <string name="eje_x">Eje X :</string>
+    <string name="eje_y">Eje Y :</string>
+    <string name="eje_z">Eje Z :</string>
+    <string name="acelerometro">Acelerómetro</string>
+    <string name="luminosidad">Luminosidad</string>
+    <string name="proximidad">Proximidad</string>
+    <string name="aceleracion">Aceleración</string>
+    <string name="ver_datos">Ver datos</string>
 </resources>

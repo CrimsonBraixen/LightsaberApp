@@ -5,7 +5,15 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.martinartime.lightsaberapp.R;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by pablo on 28/9/2017.
@@ -19,24 +27,38 @@ public class SensorActivity extends Activity implements SensorEventListener {
     private static int UMBRAL_MOVIMIENTO=2500;
     private static float UMBRAL_LUZ=230;
     //SENSOR
-    private final SensorManager sensorManager;
-    private final Sensor aceletrometro;
-    private final Sensor proximidad;
-    private final Sensor luminico;
+    private SensorManager sensorManager;
+    private Sensor aceletrometro;
+    private Sensor proximidad;
+    private Sensor luminico;
     //ACELEROMETRO
     private long ultimaActualizacion = 0;
     private float xAnterior;
     private float yAnterior;
     private float zAnterior;
 
+    @BindView(R.id.tv_ejeX_value) TextView tv_ejeX;
+    @BindView (R.id.tv_ejeY_value) TextView tv_ejeY;
+    @BindView (R.id.tv_ejeZ_value) TextView tv_ejeZ;
+    @BindView (R.id.tv_aceleracion_value) TextView tv_aceleracion;
+    @BindView (R.id.tv_luminosidad_value) TextView tv_luminosidad;
+    @BindView (R.id.tv_proximidad_value) TextView tv_proximidad;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_sensor_activity);
 
+        ButterKnife.bind(this);
 
-    public SensorActivity() {
         sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
         aceletrometro = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         proximidad= sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         luminico = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+    }
+
+    public SensorActivity() {
+
     }
 
     protected void onResume() {
@@ -68,6 +90,11 @@ public class SensorActivity extends Activity implements SensorEventListener {
 
                 double aceleracion = calcularAceleracion(x, y, z);
 
+                tv_ejeX.setText(String.valueOf(x));
+                tv_ejeY.setText(String.valueOf(y));
+                tv_ejeZ.setText(String.valueOf(z));
+                tv_aceleracion.setText(String.valueOf(aceleracion));
+
                 if (aceleracion > UMBRAL_MOVIMIENTO) {
                     //enviar por bluTú al arduino que se movio
                     Toast.makeText(getApplicationContext(), "Hubo aceleración", Toast.LENGTH_SHORT).show();
@@ -81,6 +108,9 @@ public class SensorActivity extends Activity implements SensorEventListener {
             }
         }else if(sensorQueCambio.getType() == Sensor.TYPE_PROXIMITY){
             float valor= event.values[0];
+
+            tv_proximidad.setText(String.valueOf(valor));
+
             if ( valor>= -SENSIBILIDAD_PROXIMIDAD && valor <= SENSIBILIDAD_PROXIMIDAD) {
                 //enviar por bluTú al arduino que se prenda el sable
                 Toast.makeText(getApplicationContext(), "cerca", Toast.LENGTH_SHORT).show();
@@ -90,6 +120,9 @@ public class SensorActivity extends Activity implements SensorEventListener {
             }
         }else if(sensorQueCambio.getType()== Sensor.TYPE_LIGHT){
             float valor= event.values[0];
+
+            tv_luminosidad.setText(String.valueOf(valor));
+
             if ( valor>= UMBRAL_LUZ) {
                 //enviar por bluTú al arduino que filtre.
                 Toast.makeText(getApplicationContext(), "luz fuerte", Toast.LENGTH_SHORT).show();
@@ -102,7 +135,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
     }
 
     /**
-     * calcula la aceleración a partir de los valores x, y, z actuales y los anteriores.
+     * Calcula la aceleración a partir de los valores x, y, z actuales y los anteriores.
      * @param x
      * @param y
      * @param z
@@ -115,7 +148,5 @@ public class SensorActivity extends Activity implements SensorEventListener {
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 }
