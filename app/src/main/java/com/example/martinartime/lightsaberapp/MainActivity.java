@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
     static final String TAG_MAIN = "MainActivity";
 
     @BindView (R.id.colores) ImageView colores;
-    @BindView (R.id.luz) ImageView luz;
     static Bluetooth bluetooth;
 
     /**
@@ -75,12 +74,6 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.cardDatos)
     public void verDatos(){
         Intent intent = new Intent(getApplicationContext(), SensorActivity.class);
-
-        YoYo.with(Techniques.Bounce)
-                .duration(2000)
-                .repeat(1)
-                .playOn(findViewById(R.id.colores));
-
         startActivity(intent);
     }
 
@@ -90,21 +83,6 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.cardColores)
     public void cambiarColor(){
         Intent intent = new Intent(getApplicationContext(), CambiarColor.class);
-
-        YoYo.with(Techniques.Bounce)
-                .duration(2000)
-                .repeat(1)
-                .playOn(findViewById(R.id.colores));
-
-        startActivity(intent);
-    }
-
-    /**
-     * Iniciar actividad AjustarLuz
-     */
-    @OnClick(R.id.cardLuz)
-    public void ajustarLuz(){
-        Intent intent = new Intent(getApplicationContext(), AjustarLuz.class);
         startActivity(intent);
     }
 }
