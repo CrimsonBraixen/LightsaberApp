@@ -17,4 +17,5 @@
     <string name="azul">Azul</string>
     <string name="rojo">Rojo</string>
     <string name="colorizar">Colorizar!</string>
+    <string name="manejar_bluetooth">Manejar Bluetooth</string>
 </resources>

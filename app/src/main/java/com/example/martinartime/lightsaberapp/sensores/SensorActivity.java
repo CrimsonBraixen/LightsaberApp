@@ -1,20 +1,29 @@
 package com.example.martinartime.lightsaberapp.sensores;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.widget.ImageView;
+import android.view.View;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.martinartime.lightsaberapp.Bluetooth;
+import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.example.martinartime.lightsaberapp.R;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,10 +56,22 @@ public class SensorActivity extends Activity implements SensorEventListener {
     private float yAnterior;
     private float zAnterior;
     //DATOS A ENVIAR
-    private static Byte DEBIL = 0;
-    private static Byte FUERTE = 1;
-    private static Byte CHOQUE = 2;
-    private static Byte ACELERACION = 3;
+    private static char DEBIL = 0;
+    private static char FUERTE = 1;
+    private static char CHOQUE = 2;
+    private static char ACELERACION = 3;
+
+    //BLUETOOTH
+    private BluetoothAdapter btAdapter = null;
+    private BluetoothSocket btSocket = null;
+    private StringBuilder recDataString = new StringBuilder();
+    private ConnectedThread mConnectedThread;
+
+    // SPP UUID service  - Funciona en la mayoria de los dispositivos
+    private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+
+    // String for MAC address del Hc05
+    private static String address = null;
 
     @BindView(R.id.tv_ejeX_value)
     TextView tv_ejeX;
@@ -64,6 +85,12 @@ public class SensorActivity extends Activity implements SensorEventListener {
     TextView tv_luminosidad;
     @BindView(R.id.tv_proximidad_value)
     TextView tv_proximidad;
+    @BindView (R.id.barAzul)
+    SeekBar barAzul;
+    @BindView (R.id.barRojo)
+    SeekBar barRojo;
+    @BindView (R.id.botonColor)
+    BootstrapButton botonColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,31 +103,129 @@ public class SensorActivity extends Activity implements SensorEventListener {
         aceletrometro = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         proximidad = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         luminico = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+
+        //obtengo el adaptador del bluethoot
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        barAzul.getProgressDrawable().setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
+        barAzul.getThumb().setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
+
+        barRojo.getProgressDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
+        barRojo.getThumb().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
+
+        botonColor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int rojo = barRojo.getProgress();
+                int azul = barAzul.getProgress();
+                String color;
+
+                if (rojo == 0 && azul == 0) {
+                    Toast.makeText(getApplicationContext(), "Debe setear por lo menos un color", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (rojo > 0 && azul == 0) {
+                    botonColor.setBackgroundColor(Color.RED);
+                    color = "R";
+                } else if (rojo == 0 && azul > 0) {
+                    botonColor.setBackgroundColor(Color.BLUE);
+                    color = "A";
+                } else {
+                    botonColor.setBackgroundColor(Color.rgb(255, 0, 255));
+                    color = "V";
+                }
+                try {
+                    mConnectedThread.mmOutStream.write(color.getBytes());
+                } catch (IOException e) {
+                    Toast.makeText(getApplication().getApplicationContext(), "Error al escribir", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
-    public SensorActivity() {
-
-    }
-
-    protected void onResume() {
+    @Override
+    //Cada vez que se detecta el evento OnResume se establece la comunicacion con el HC05, creando un
+    //socketBluethoot
+    public void onResume() {
         super.onResume();
+
+        //Obtengo el parametro, aplicando un Bundle, que me indica la Mac Adress del HC05
+        Intent intent=getIntent();
+        Bundle extras=intent.getExtras();
+
+        address= extras.getString("Direccion_Bluethoot");
+
         sensorManager.registerListener(this, aceletrometro, SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(this, proximidad, SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(this, luminico, SensorManager.SENSOR_DELAY_NORMAL);
 
+        BluetoothDevice device = btAdapter.getRemoteDevice(address);
+
+        //se realiza la conexion del Bluethoot crea y se conectandose a atraves de un socket
+        try
+        {
+            btSocket = createBluetoothSocket(device);
+        }
+        catch (IOException e)
+        {
+            Toast.makeText(getApplication().getApplicationContext(),"La creacción del Socket fallo",Toast.LENGTH_SHORT).show();
+        }
+        // Establish the Bluetooth socket connection.
+        try
+        {
+            btSocket.connect();
+        }
+        catch (IOException e)
+        {
+            try
+            {
+                btSocket.close();
+            }
+            catch (IOException e2)
+            {
+                //insert code to deal with this
+            }
+        }
+
+        //Una establecida la conexion con el Hc05 se crea el hilo secundario, el cual va a recibir
+        // los datos de Arduino atraves del bluethoot
+        mConnectedThread = new ConnectedThread(btSocket);
+        mConnectedThread.start();
+
+        //I send a character when resuming.beginning transmission to check device is connected
+        //If it is not an exception will be thrown in the write method and finish() will be called
+        mConnectedThread.write("x");
     }
 
-    protected void onPause() {
+    @Override
+    //Cuando se ejecuta el evento onPause se cierra el socket Bluethoot, para no recibiendo datos
+    public void onPause()
+    {
         super.onPause();
+
         sensorManager.unregisterListener(this);
+
+        try
+        {
+            //Don't leave Bluetooth sockets open when leaving activity
+            btSocket.close();
+        } catch (IOException e2) {
+            //insert code to deal with this
+        }
     }
+
+    //Metodo que crea el socket bluethoot
+    private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
+
+        return  device.createRfcommSocketToServiceRecord(BTMODULEUUID);
+    }
+
+    public SensorActivity() {}
 
     @Override
     public void onSensorChanged(SensorEvent event) {
 
         synchronized (this) {
-
-            BluetoothSocket socket = Bluetooth.getMsocket();
 
             Sensor sensorQueCambio = event.sensor;
 
@@ -122,12 +247,13 @@ public class SensorActivity extends Activity implements SensorEventListener {
                     tv_aceleracion.setText(String.valueOf(aceleracion));
 
                     if (aceleracion > UMBRAL_MOVIMIENTO) {
-                        if (socket != null) {
-                            try {
-                                socket.getOutputStream().write(ACELERACION);
-                            } catch (IOException e) {
-                                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
+                        if (btSocket != null) {
+//                                btSocket.getOutputStream().write(ACELERACION);
+                                try {
+                                    mConnectedThread.mmOutStream.write(ACELERACION);
+                                } catch (IOException e) {
+                                    Toast.makeText(getApplication().getApplicationContext(), "Error al escribir", Toast.LENGTH_SHORT).show();
+                                }
                         }
                         Toast.makeText(getApplicationContext(), "Hubo aceleración", Toast.LENGTH_SHORT).show();
                     } else {
@@ -144,9 +270,10 @@ public class SensorActivity extends Activity implements SensorEventListener {
                 tv_proximidad.setText(String.valueOf(valor));
 
                 if (valor >= -SENSIBILIDAD_PROXIMIDAD && valor <= SENSIBILIDAD_PROXIMIDAD) {
-                    if (socket != null) {
+                    if (btSocket != null) {
                         try {
-                            socket.getOutputStream().write(CHOQUE);
+                            //btSocket.getOutputStream().write(CHOQUE);
+                            mConnectedThread.mmOutStream.write(CHOQUE);
                         } catch (IOException e) {
                             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -161,18 +288,20 @@ public class SensorActivity extends Activity implements SensorEventListener {
                 tv_luminosidad.setText(String.valueOf(valor));
 
                 if (valor >= UMBRAL_LUZ) {
-                    if (socket != null) {
+                    if (btSocket != null) {
                         try {
-                            socket.getOutputStream().write(FUERTE);
+                            //btSocket.getOutputStream().write(FUERTE);
+                            mConnectedThread.mmOutStream.write(FUERTE);
                         } catch (IOException e) {
                             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                     Toast.makeText(getApplicationContext(), "luz fuerte", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (socket != null) {
+                    if (btSocket != null) {
                         try {
-                            socket.getOutputStream().write(DEBIL);
+//                            btSocket.getOutputStream().write(DEBIL);
+                            mConnectedThread.mmOutStream.write(DEBIL);
                         } catch (IOException e) {
                             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -200,5 +329,45 @@ public class SensorActivity extends Activity implements SensorEventListener {
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    }
+
+    private class ConnectedThread extends Thread
+    {
+        private final InputStream mmInStream;
+        private final OutputStream mmOutStream;
+
+        //Constructor de la clase del hilo secundario
+        public ConnectedThread(BluetoothSocket socket)
+        {
+            InputStream tmpIn = null;
+            OutputStream tmpOut = null;
+
+            try
+            {
+                //Create I/O streams for connection
+                tmpIn = socket.getInputStream();
+                tmpOut = socket.getOutputStream();
+            } catch (IOException e) { }
+
+            mmInStream = tmpIn;
+            mmOutStream = tmpOut;
+        }
+
+        //metodo run del hilo, que va a entrar en una espera activa para recibir los msjs del HC05
+        public void run() {
+            while (true) {}
+        }
+
+        //write method
+        public void write(String input) {
+            byte[] msgBuffer = input.getBytes();           //converts entered String into bytes
+            try {
+                mmOutStream.write(msgBuffer);                //write bytes over BT connection via outstream
+            } catch (IOException e) {
+                //if you cannot write, close the application
+                Toast.makeText(getApplication().getApplicationContext(),"La conexion fallo",Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
     }
 }

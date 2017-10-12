@@ -1,20 +1,15 @@
 package com.example.martinartime.lightsaberapp;
 
 import android.app.Dialog;
-import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.daimajia.androidanimations.library.Techniques;
-import com.daimajia.androidanimations.library.YoYo;
+import com.example.martinartime.lightsaberapp.bluetooth.ConectarBluetoothActivity;
 import com.example.martinartime.lightsaberapp.sensores.SensorActivity;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -22,10 +17,7 @@ import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
 
-    static final String TAG_MAIN = "MainActivity";
-
-    @BindView (R.id.colores) ImageView colores;
-    static Bluetooth bluetooth;
+    static final String TAG_MAIN = "";
 
     /**
      * Se hace el binding de las views
@@ -40,9 +32,9 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        bluetooth = new Bluetooth(getApplicationContext());
+        //bluetooth = new Bluetooth(getApplicationContext());
 
-        ArrayList<BluetoothDevice> equipos = bluetooth.establecerConexionBluetooth(this);
+        /*ArrayList<BluetoothDevice> equipos = bluetooth.establecerConexionBluetooth(this);
 
         if(equipos!=null){
             Dialog dialog = crearDialogo(equipos.get(0).getName());
@@ -50,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else{
             Toast.makeText(getApplicationContext(), "No se encontraron Equipos bluetooth", Toast.LENGTH_LONG).show();
-        }
+        }*/
     }
 
     /**
@@ -70,19 +62,19 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Iniciar actividad VerDatos
-     */
+     *//*
     @OnClick(R.id.cardDatos)
     public void verDatos(){
         Intent intent = new Intent(getApplicationContext(), SensorActivity.class);
         startActivity(intent);
     }
-
+*/
     /**
-     * Iniciar actividad CambiarColor
+     * Iniciar actividad ManejarBluetooth
      */
-    @OnClick(R.id.cardColores)
-    public void cambiarColor(){
-        Intent intent = new Intent(getApplicationContext(), CambiarColor.class);
+    @OnClick(R.id.cardBluetooth)
+    public void manejarBluetooth(){
+        Intent intent = new Intent(getApplicationContext(), ConectarBluetoothActivity.class);
         startActivity(intent);
     }
 }

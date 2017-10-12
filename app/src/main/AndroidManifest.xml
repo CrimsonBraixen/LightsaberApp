@@ -20,8 +20,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CambiarColor"/>
         <activity android:name=".sensores.SensorActivity"/>
+        <activity android:name=".bluetooth.ConectarBluetoothActivity"/>
+        <activity android:name=".bluetooth.DeviceListActivity"/>
     </application>
 
 </manifest>
