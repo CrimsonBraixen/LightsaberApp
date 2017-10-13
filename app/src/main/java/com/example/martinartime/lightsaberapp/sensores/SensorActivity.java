@@ -255,9 +255,9 @@ public class SensorActivity extends Activity implements SensorEventListener {
                                     Toast.makeText(getApplication().getApplicationContext(), "Error al escribir", Toast.LENGTH_SHORT).show();
                                 }
                         }
-                        Toast.makeText(getApplicationContext(), "Hubo aceleración", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(), "Hubo aceleración", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(getApplicationContext(), "Neutro", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(), "Neutro", Toast.LENGTH_SHORT).show();
                     }
 
                     xAnterior = x;
@@ -273,14 +273,14 @@ public class SensorActivity extends Activity implements SensorEventListener {
                     if (btSocket != null) {
                         try {
                             //btSocket.getOutputStream().write(CHOQUE);
-                            mConnectedThread.mmOutStream.write(CHOQUE);
-                        } catch (IOException e) {
+                            mConnectedThread.write("3");
+                        } catch (Exception e) {
                             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
-                    Toast.makeText(getApplicationContext(), "cerca", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "cerca", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getApplicationContext(), "lejos", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "lejos", Toast.LENGTH_SHORT).show();
                 }
             } else if (sensorQueCambio.getType() == Sensor.TYPE_LIGHT) {
                 float valor = event.values[0];
@@ -291,22 +291,22 @@ public class SensorActivity extends Activity implements SensorEventListener {
                     if (btSocket != null) {
                         try {
                             //btSocket.getOutputStream().write(FUERTE);
-                            mConnectedThread.mmOutStream.write(FUERTE);
-                        } catch (IOException e) {
+                            mConnectedThread.write("1");
+                        } catch (Exception e) {
                             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
-                    Toast.makeText(getApplicationContext(), "luz fuerte", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(getApplicationContext(), "luz fuerte", Toast.LENGTH_SHORT).show();
                 } else {
                     if (btSocket != null) {
                         try {
 //                            btSocket.getOutputStream().write(DEBIL);
-                            mConnectedThread.mmOutStream.write(DEBIL);
-                        } catch (IOException e) {
+                            mConnectedThread.write("0");
+                        } catch (Exception e) {
                             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
-                    Toast.makeText(getApplicationContext(), "luz débil", Toast.LENGTH_SHORT).show();
+                 //   Toast.makeText(getApplicationContext(), "luz débil", Toast.LENGTH_SHORT).show();
                 }
             }
 
