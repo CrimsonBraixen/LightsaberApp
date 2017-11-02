@@ -254,9 +254,9 @@ public class SensorActivity extends Activity implements SensorEventListener {
                         if (btSocket != null) {
                             mConnectedThread.write(ACELERACION);
                         }
-                        Toast.makeText(getApplicationContext(), "Hubo aceleración", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(), "Hubo aceleración", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(getApplicationContext(), "Neutro", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(), "Neutro", Toast.LENGTH_SHORT).show();
                     }
 
                     xAnterior = x;
@@ -272,9 +272,9 @@ public class SensorActivity extends Activity implements SensorEventListener {
                     if (btSocket != null) {
                         mConnectedThread.write(CHOQUE);
                     }
-                    Toast.makeText(getApplicationContext(), "cerca", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "cerca", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getApplicationContext(), "lejos", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "lejos", Toast.LENGTH_SHORT).show();
                 }
             } else if (sensorQueCambio.getType() == Sensor.TYPE_LIGHT) {
                 float valor = event.values[0];
@@ -285,12 +285,12 @@ public class SensorActivity extends Activity implements SensorEventListener {
                     if (btSocket != null) {
                         mConnectedThread.write(FUERTE);
                     }
-                    Toast.makeText(getApplicationContext(), "luz fuerte", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(getApplicationContext(), "luz fuerte", Toast.LENGTH_SHORT).show();
                 } else {
                     if (btSocket != null) {
                         mConnectedThread.write(DEBIL);
                     }
-                    Toast.makeText(getApplicationContext(), "luz débil", Toast.LENGTH_SHORT).show();
+                 //   Toast.makeText(getApplicationContext(), "luz débil", Toast.LENGTH_SHORT).show();
                 }
             }
 
