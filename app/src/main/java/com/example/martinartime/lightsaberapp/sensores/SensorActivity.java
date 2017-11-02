@@ -59,10 +59,10 @@ public class SensorActivity extends Activity implements SensorEventListener {
     private float yAnterior;
     private float zAnterior;
     //DATOS A ENVIAR
-    private static char DEBIL = 0;
-    private static char FUERTE = 1;
-    private static char CHOQUE = 2;
-    private static char ACELERACION = 3;
+    private static String DEBIL = "0";
+    private static String FUERTE = "1";
+    private static String CHOQUE = "2";
+    private static String ACELERACION = "3";
 
     //BLUETOOTH
     private BluetoothAdapter btAdapter = null;
@@ -252,12 +252,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
 
                     if (aceleracion > UMBRAL_MOVIMIENTO) {
                         if (btSocket != null) {
-//                                btSocket.getOutputStream().write(ACELERACION);
-                                try {
-                                    mConnectedThread.mmOutStream.write(ACELERACION);
-                                } catch (IOException e) {
-                                    Toast.makeText(getApplication().getApplicationContext(), "Error al escribir", Toast.LENGTH_SHORT).show();
-                                }
+                            mConnectedThread.write(ACELERACION);
                         }
                         Toast.makeText(getApplicationContext(), "Hubo aceleración", Toast.LENGTH_SHORT).show();
                     } else {
@@ -275,12 +270,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
 
                 if (valor >= -SENSIBILIDAD_PROXIMIDAD && valor <= SENSIBILIDAD_PROXIMIDAD) {
                     if (btSocket != null) {
-                        try {
-                            //btSocket.getOutputStream().write(CHOQUE);
-                            mConnectedThread.mmOutStream.write(CHOQUE);
-                        } catch (IOException e) {
-                            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                        mConnectedThread.write(CHOQUE);
                     }
                     Toast.makeText(getApplicationContext(), "cerca", Toast.LENGTH_SHORT).show();
                 } else {
@@ -293,22 +283,12 @@ public class SensorActivity extends Activity implements SensorEventListener {
 
                 if (valor >= UMBRAL_LUZ) {
                     if (btSocket != null) {
-                        try {
-                            //btSocket.getOutputStream().write(FUERTE);
-                            mConnectedThread.mmOutStream.write(FUERTE);
-                        } catch (IOException e) {
-                            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                        mConnectedThread.write(FUERTE);
                     }
                     Toast.makeText(getApplicationContext(), "luz fuerte", Toast.LENGTH_SHORT).show();
                 } else {
                     if (btSocket != null) {
-                        try {
-//                            btSocket.getOutputStream().write(DEBIL);
-                            mConnectedThread.mmOutStream.write(DEBIL);
-                        } catch (IOException e) {
-                            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                        mConnectedThread.write(DEBIL);
                     }
                     Toast.makeText(getApplicationContext(), "luz débil", Toast.LENGTH_SHORT).show();
                 }
