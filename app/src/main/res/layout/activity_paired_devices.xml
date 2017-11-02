@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/wall"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -10,13 +10,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Lista de dispositivos"
+        android:text="@string/lista_de_dispositivos"
+        android:background="@color/starHard"
         android:textSize="17sp" />
-    
+
     <ListView
         android:id="@+id/lv_paired"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@android:color/transparent"
         android:cacheColorHint="#00000000" />
 
 </LinearLayout>

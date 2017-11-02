@@ -1,29 +1,28 @@
 package com.example.martinartime.lightsaberapp.bluetooth;
 
-import java.util.ArrayList;
-import java.util.Set;
-
+import android.Manifest;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.View;
-
-import android.app.Activity;
-import android.app.ProgressDialog;
-
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-
+import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.example.martinartime.lightsaberapp.R;
+
+import java.util.ArrayList;
+import java.util.Set;
 
 /*********************************************************************************************************
  * Activity Principal de la App. Es la primiera activity que se ejecuta cuando el usuario ingresa a la App
@@ -32,15 +31,19 @@ import com.example.martinartime.lightsaberapp.R;
 public class ConectarBluetoothActivity extends Activity
 {
 	private TextView txtEstado;
-	private Button btnActivar;
-	private Button btnEmparejar;
-	private Button btnBuscar;
+	private BootstrapButton btnActivar;
+	private BootstrapButton btnEmparejar;
+	private BootstrapButton btnBuscar;
+
+	private Activity activity;
 
 	private ProgressDialog mProgressDlg;
 
 	private ArrayList<BluetoothDevice> mDeviceList = new ArrayList<BluetoothDevice>();
 
 	private BluetoothAdapter mBluetoothAdapter;
+
+    int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 1;
 
 	@Override
 	//Metodo On create
@@ -51,9 +54,15 @@ public class ConectarBluetoothActivity extends Activity
 
 		//Se definen los componentes del layout
 		txtEstado = (TextView) findViewById(R.id.txtEstado);
-		btnActivar = (Button) findViewById(R.id.btnActivar);
-		btnEmparejar = (Button) findViewById(R.id.btnEmparejar);
-		btnBuscar = (Button) findViewById(R.id.btnBuscar);
+		btnActivar = (BootstrapButton) findViewById(R.id.btnActivar);
+		btnEmparejar = (BootstrapButton) findViewById(R.id.btnEmparejar);
+		btnBuscar = (BootstrapButton) findViewById(R.id.btnBuscar);
+
+		activity = this;
+
+		btnActivar.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+		btnEmparejar.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+		btnBuscar.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
 
 		//Se crea un adaptador para podermanejar el bluethoot del celular
 		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -215,7 +224,6 @@ public class ConectarBluetoothActivity extends Activity
 			{
 				//Se lo agregan sus datos a una lista de dispositivos encontrados
 				BluetoothDevice device = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
 				mDeviceList.add(device);
 				showToast("Dispositivo Encontrado:" + device.getName());
 			}
@@ -252,6 +260,10 @@ public class ConectarBluetoothActivity extends Activity
 	private View.OnClickListener btnBuscarListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION);
+
 			mBluetoothAdapter.startDiscovery();
 		}
 	};

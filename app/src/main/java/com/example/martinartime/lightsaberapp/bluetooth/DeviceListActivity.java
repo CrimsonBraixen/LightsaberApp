@@ -12,11 +12,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
+import android.util.Log;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.martinartime.lightsaberapp.R;
 import com.example.martinartime.lightsaberapp.sensores.SensorActivity;
+
+import static android.content.ContentValues.TAG;
 
 /*********************************************************************************************************
  * Activity que muestra el listado de los dispositivos bluethoot encontrados

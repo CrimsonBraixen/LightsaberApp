@@ -12,6 +12,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -27,6 +28,8 @@ import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by pablo on 28/9/2017.
@@ -100,9 +103,10 @@ public class SensorActivity extends Activity implements SensorEventListener {
         ButterKnife.bind(this);
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        aceletrometro = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        proximidad = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-        luminico = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+
+        aceletrometro = sensorManager != null ? sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) : null;
+        proximidad = sensorManager != null ? sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY) : null;
+        luminico = sensorManager != null ? sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT) : null;
 
         //obtengo el adaptador del bluethoot
         btAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -153,7 +157,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
         Intent intent=getIntent();
         Bundle extras=intent.getExtras();
 
-        address= extras.getString("Direccion_Bluethoot");
+        address= extras != null ? extras.getString("Direccion_Bluethoot") : null;
 
         sensorManager.registerListener(this, aceletrometro, SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(this, proximidad, SensorManager.SENSOR_DELAY_NORMAL);
@@ -360,7 +364,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
 
         //write method
         public void write(String input) {
-            byte[] msgBuffer = input.getBytes();           //converts entered String into bytes
+            byte[] msgBuffer = input.getBytes();
             try {
                 mmOutStream.write(msgBuffer);                //write bytes over BT connection via outstream
             } catch (IOException e) {

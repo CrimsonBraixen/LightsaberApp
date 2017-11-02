@@ -13,6 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.example.martinartime.lightsaberapp.R;
 
 /**
@@ -60,7 +61,7 @@ public class DeviceListAdapter extends BaseAdapter{
 			
 			holder.nameTv		= (TextView) convertView.findViewById(R.id.tv_name);
 			holder.addressTv 	= (TextView) convertView.findViewById(R.id.tv_address);
-			holder.pairBtn		= (Button) convertView.findViewById(R.id.btn_pair);
+			holder.pairBtn		= (BootstrapButton) convertView.findViewById(R.id.btn_pair);
 			
 			convertView.setTag(holder);
 		} else {

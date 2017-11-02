@@ -17,5 +17,12 @@
     <string name="azul">Azul</string>
     <string name="rojo">Rojo</string>
     <string name="colorizar">Colorizar!</string>
-    <string name="manejar_bluetooth">Manejar Bluetooth</string>
+    <string name="manejar_bluetooth">Conectar Bluetooth</string>
+    <string name="pair">Pair</string>
+    <string name="moto_e2">Moto E2</string>
+    <string name="_000000000">000000000</string>
+    <string name="lista_de_dispositivos">Lista de dispositivos</string>
+    <string name="text_enable">Text Enable</string>
+    <string name="paired">Paired</string>
+    <string name="scan">Scan</string>
 </resources>
