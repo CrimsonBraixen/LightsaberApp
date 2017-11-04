@@ -46,7 +46,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
 
     //CONSTANTES
     private static final int SENSIBILIDAD_PROXIMIDAD = 4;
-    private static int UMBRAL_MOVIMIENTO = 2500;
+    private static int UMBRAL_MOVIMIENTO = 15;
     private static float UMBRAL_LUZ = 230;
     //SENSOR
     private SensorManager sensorManager;
@@ -96,6 +96,8 @@ public class SensorActivity extends Activity implements SensorEventListener {
 
         ButterKnife.bind(this);
 
+        //Obtengo el parametro, aplicando un Bundle, que me indica la Mac Adress del HC05
+
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         aceletrometro = sensorManager != null ? sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) : null;
@@ -143,7 +145,6 @@ public class SensorActivity extends Activity implements SensorEventListener {
     public void onResume() {
         super.onResume();
 
-        //Obtengo el parametro, aplicando un Bundle, que me indica la Mac Adress del HC05
         Intent intent=getIntent();
         Bundle extras=intent.getExtras();
 
@@ -246,7 +247,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
                     double aceleracion = calcularAceleracion(x, y, z);
 
                     tv_aceleracion.setText(String.valueOf(aceleracion));
-
+                    Log.e(TAG, "onSensorChanged: "+String.valueOf(aceleracion) );
                     if (aceleracion > UMBRAL_MOVIMIENTO) {
                         if (btSocket != null) {
                             mConnectedThread.write(ACELERACION);

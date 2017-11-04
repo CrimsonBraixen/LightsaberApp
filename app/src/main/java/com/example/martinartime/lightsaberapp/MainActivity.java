@@ -62,9 +62,7 @@ public class MainActivity extends AppCompatActivity {
             i.putExtra("Direccion_Bluethoot", address);
 
             //Toast.makeText(this, "MAIN A SENSORACTIVITY ADDRESS:"+address, Toast.LENGTH_SHORT).show();
-
-            Intent intent = new Intent(getApplicationContext(), SensorActivity.class);
-            startActivityForResult(intent, 1);
+            startActivityForResult(i, 1);
         }
         else{
             Toast.makeText(this, "Conectarse a bluetooth primero", Toast.LENGTH_SHORT).show();
