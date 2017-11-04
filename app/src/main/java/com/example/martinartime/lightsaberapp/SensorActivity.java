@@ -1,4 +1,4 @@
-package com.example.martinartime.lightsaberapp.sensores;
+package com.example.martinartime.lightsaberapp;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -76,12 +76,6 @@ public class SensorActivity extends Activity implements SensorEventListener {
     // String for MAC address del Hc05
     private static String address = null;
 
-    @BindView(R.id.tv_ejeX_value)
-    TextView tv_ejeX;
-    @BindView(R.id.tv_ejeY_value)
-    TextView tv_ejeY;
-    @BindView(R.id.tv_ejeZ_value)
-    TextView tv_ejeZ;
     @BindView(R.id.tv_aceleracion_value)
     TextView tv_aceleracion;
     @BindView(R.id.tv_luminosidad_value)
@@ -138,11 +132,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
                     botonColor.setBackgroundColor(Color.rgb(255, 0, 255));
                     color = "V";
                 }
-                try {
-                    mConnectedThread.mmOutStream.write(color.getBytes());
-                } catch (IOException e) {
-                    Toast.makeText(getApplication().getApplicationContext(), "Error al escribir", Toast.LENGTH_SHORT).show();
-                }
+                mConnectedThread.write(color);
             }
         });
     }
@@ -191,6 +181,7 @@ public class SensorActivity extends Activity implements SensorEventListener {
             }
         }
 
+
         //Una establecida la conexion con el Hc05 se crea el hilo secundario, el cual va a recibir
         // los datos de Arduino atraves del bluethoot
         mConnectedThread = new ConnectedThread(btSocket);
@@ -203,9 +194,9 @@ public class SensorActivity extends Activity implements SensorEventListener {
 
     @Override
     //Cuando se ejecuta el evento onPause se cierra el socket Bluethoot, para no recibiendo datos
-    public void onPause()
+    public void onDestroy()
     {
-        super.onPause();
+        super.onDestroy();
 
         sensorManager.unregisterListener(this);
 
@@ -213,6 +204,15 @@ public class SensorActivity extends Activity implements SensorEventListener {
         {
             //Don't leave Bluetooth sockets open when leaving activity
             btSocket.close();
+
+            Intent data = new Intent();
+            data.putExtra("Direccion_Bluethoot", address);
+
+            //Toast.makeText(this, "SENSORACTIVITY A MAIN ADDRESS:"+address, Toast.LENGTH_SHORT).show();
+
+            setResult(RESULT_OK, data);
+            finish();
+
         } catch (IOException e2) {
             //insert code to deal with this
         }
@@ -245,9 +245,6 @@ public class SensorActivity extends Activity implements SensorEventListener {
 
                     double aceleracion = calcularAceleracion(x, y, z);
 
-                    tv_ejeX.setText(String.valueOf(x));
-                    tv_ejeY.setText(String.valueOf(y));
-                    tv_ejeZ.setText(String.valueOf(z));
                     tv_aceleracion.setText(String.valueOf(aceleracion));
 
                     if (aceleracion > UMBRAL_MOVIMIENTO) {

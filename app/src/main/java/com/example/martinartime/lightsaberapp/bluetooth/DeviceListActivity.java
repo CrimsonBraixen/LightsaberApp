@@ -12,14 +12,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-import android.util.Log;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.martinartime.lightsaberapp.MainActivity;
 import com.example.martinartime.lightsaberapp.R;
-import com.example.martinartime.lightsaberapp.sensores.SensorActivity;
-
-import static android.content.ContentValues.TAG;
+import com.example.martinartime.lightsaberapp.SensorActivity;
 
 /*********************************************************************************************************
  * Activity que muestra el listado de los dispositivos bluethoot encontrados
@@ -145,9 +143,8 @@ public class DeviceListActivity extends Activity
                     //se inicia el Activity de comunicacion con el bluethoot, para transferir los datos.
                     //Para eso se le envia como parametro la direccion(MAC) del bluethoot Arduino
                     String direccionBluethoot = dispositivo.getAddress();
-                    Intent i = new Intent(DeviceListActivity.this, SensorActivity.class);
+                    Intent i = new Intent(DeviceListActivity.this, MainActivity.class);
                     i.putExtra("Direccion_Bluethoot", direccionBluethoot);
-
                     startActivity(i);
 
                 }  //si se detrecto un desaemparejamiento
